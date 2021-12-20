@@ -1,0 +1,144 @@
+{
+  "version": "0.0.0",
+  "name": "scum_staking_metadata",
+  "instructions": [
+    {
+      "name": "initStatePda",
+      "accounts": [
+        {
+          "name": "signer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "statePda",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "registerNft",
+      "accounts": [
+        {
+          "name": "staker",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "nftAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftMetadataPda",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "statePda",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "closeRegistration",
+      "accounts": [
+        {
+          "name": "signer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "statePda",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "StateAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "numNftsRegistered",
+            "type": "u64"
+          },
+          {
+            "name": "registrationFinalized",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "NftMetadata",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "isValid",
+            "type": "bool"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 300,
+      "name": "InvalideAuthorizedSigner",
+      "msg": "Invalid authorized signed"
+    },
+    {
+      "code": 301,
+      "name": "RegistrationIsClosed",
+      "msg": "Registration is already closed"
+    },
+    {
+      "code": 302,
+      "name": "TooManyNftsAlreadyRegistered",
+      "msg": "Num NFTs registered exceeds collection limit"
+    }
+  ],
+  "metadata": {
+    "address": "HA1LGsASKrSnPiMCy4E6xPy49km8yYVdsvjVZerp71tB"
+  }
+}

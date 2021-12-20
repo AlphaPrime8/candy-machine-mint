@@ -1,4 +1,5 @@
 import * as anchor from "@project-serum/anchor";
+import scum_idl from './scum_staking_metadata.json'; //TODO update program address in this idl after deploy to devnet - then again for mainnet
 
 import {
   MintLayout,
@@ -256,6 +257,27 @@ export const mintOneToken = async (
     MintLayout.span
   );
 
+  //***BEGIN CUSTOM SCUM CODE SETUP HERE***///
+  // initialize scum metadata program for rpc call
+  const scumIdl = scum_idl as anchor.Idl; // can do this deterministically from idl registered on-chain instead
+  const programID = new anchor.web3.PublicKey(scum_idl.metadata.address);
+  const scumMetadataProgram = new anchor.Program(scumIdl, programID, program.provider);
+
+  // lookup state pda
+  const STATE_PDA_SEED = "state";
+  const [statePda] = await anchor.web3.PublicKey.findProgramAddress(
+[Buffer.from(Buffer.from(STATE_PDA_SEED))],
+      scumMetadataProgram.programId
+  );
+
+  //lookup nft metadata pda
+  const NFT_PDA_SEED = "nft";
+  const [nftMetadataPda] = await anchor.web3.PublicKey.findProgramAddress(
+      [Buffer.from(NFT_PDA_SEED), token.toBuffer()],
+      scumMetadataProgram.programId
+  );
+  //***END CUSTOM SCUM CODE SETUP HERE***///
+
   return await program.rpc.mintNft({
     accounts: {
       config,
@@ -275,6 +297,20 @@ export const mintOneToken = async (
     },
     signers: [mint],
     instructions: [
+
+      //*** BEGIN ADD SCUM INSTRUCTION CALL HERE***///
+      scumMetadataProgram.instruction.registerNft({
+        accounts: {
+          staker: payer,
+          nftAccount: token,
+          nftMetadataPda: nftMetadataPda,
+          statePda: statePda,
+          systemProgram: anchor.web3.SystemProgram.programId,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        },
+      }),
+      //*** END ADD SCUM INSTRUCTION CALL HERE***///
+
       anchor.web3.SystemProgram.createAccount({
         fromPubkey: payer,
         newAccountPubkey: mint.publicKey,
