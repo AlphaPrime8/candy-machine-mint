@@ -278,6 +278,7 @@ export const mintOneToken = async (
   );
   //***END CUSTOM SCUM CODE SETUP HERE***///
 
+  //TODO put return back in here
   return await program.rpc.mintNft({
     accounts: {
       config,
@@ -297,19 +298,6 @@ export const mintOneToken = async (
     },
     signers: [mint],
     instructions: [
-
-      //*** BEGIN ADD SCUM INSTRUCTION CALL HERE***///
-      scumMetadataProgram.instruction.registerNft({
-        accounts: {
-          staker: payer,
-          nftAccount: token,
-          nftMetadataPda: nftMetadataPda,
-          statePda: statePda,
-          systemProgram: anchor.web3.SystemProgram.programId,
-          tokenProgram: TOKEN_PROGRAM_ID,
-        },
-      }),
-      //*** END ADD SCUM INSTRUCTION CALL HERE***///
 
       anchor.web3.SystemProgram.createAccount({
         fromPubkey: payer,
@@ -339,6 +327,19 @@ export const mintOneToken = async (
         [],
         1
       ),
+
+      //*** BEGIN ADD SCUM INSTRUCTION CALL HERE***///
+      scumMetadataProgram.instruction.registerNft({
+        accounts: {
+          staker: payer,
+          nftAccount: token,
+          nftMetadataPda: nftMetadataPda,
+          statePda: statePda,
+          systemProgram: anchor.web3.SystemProgram.programId,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        },
+      }),
+      //*** END ADD SCUM INSTRUCTION CALL HERE***///
     ],
   });
 }
